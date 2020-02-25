@@ -50,7 +50,7 @@ h2 {
     margin: 0 0 30px;
 }
 
-.nowplaying {
+#current-note {
     font-size: 120px;
     line-height: 1;
     color: #eee;
@@ -79,14 +79,14 @@ h2 {
     z-index: 2;
 }
 
-.key:not(.sharp) {
+.white-key {
     float: left;
     width: 10%;
     height: 100%;
     background: rgba(255, 255, 255, .8);
 }
 
-.key.sharp {
+.black-key {
     position: absolute;
     width: 6%;
     height: 60%;
@@ -96,31 +96,31 @@ h2 {
     z-index: 3;
 }
 
-.key[data-key="87"] {
+.key[data-note-value="29"] {
     left: 7%;
 }
 
-.key[data-key="69"] {
+.key[data-note-value="31"] {
     left: 17%;
 }
 
-.key[data-key="84"]  {
+.key[data-note-value="34"]  {
     left: 37%;
 }
 
-.key[data-key="89"] {
+.key[data-note-value="36"] {
     left: 47%;
 }
 
-.key[data-key="85"] {
+.key[data-note-value="38"] {
     left: 57%;
 }
 
-.key[data-key="79"] {
+.key[data-note-value="41"] {
     left: 77%;
 }
 
-.key[data-key="80"] {
+.key[data-note-value="43"] {
     left: 87%;
 }
 

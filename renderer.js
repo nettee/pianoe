@@ -9,7 +9,7 @@ const play = require('./play');
 
 const scale = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
-const currentNote = document.querySelector(".nowplaying");
+const currentNote = document.querySelector("#current-note");
 
 const letter2value = {
     C: 0,
@@ -67,27 +67,40 @@ const notes = {
 //     console.log(note.value, note.name());
 // }
 
+function bindKey(key, note) {
+    mousetrap.bind(key, function () {
+        play.play_one(note);
+        currentNote.innerHTML = note.name();
+        const key = document.querySelector(`.key[data-note-value="${note.value}"]`);
+        if (!!key) {
+            key.classList.add("playing");
+        }
+    });
+}
+
+// const hints = document.querySelectorAll(".hints");
+// hints.forEach(function(e, index) {
+//     e.setAttribute("style", "transition-delay:" + index * 50 + "ms");
+// });
+
+const keys = document.querySelectorAll('.key');
+keys.forEach(key => key.addEventListener("transitionend", function (e) {
+    if (e.propertyName !== "transform") {
+        return;
+    }
+    this.classList.remove("playing");
+}));
+
 for (let octave = 0; octave < 7; octave++) {
     for (let i = 0; i < 7; i++) {
         if (notes[octave] === undefined || notes[octave][i] === undefined) {
             continue;
         }
-        let key = notes[octave][i];
-        let letter = scale[i];
-        // Bind common notes
-        let note = Note.fromName(letter, octave);
-        mousetrap.bind(key, function () {
-            play.play_one(note);
-            currentNote.innerHTML = note.name();
-        });
 
-        // Bind sharp notes
-        let sharp_note = note.sharp();
-        let sharp_key = `shift+${key}`;
-        // console.log({key: key, note: sharp_note, note_string: sharp_note.toString()});
-        mousetrap.bind(sharp_key, function () {
-            play.play_one(sharp_note);
-            currentNote.innerHTML = sharp_note.name();
-        });
+        let letter = scale[i];
+        let key = notes[octave][i];
+        let note = Note.fromName(letter, octave);
+        bindKey(key, note);
+        bindKey(`shift+${key}`, note.sharp());
     }
 }
