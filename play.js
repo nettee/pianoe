@@ -1,8 +1,8 @@
 const player = require('play-sound')(opts = {});
 
 function play_one(note) {
-    console.log(note);
-    const file = `notes/${note}.mp3`;
+    console.log(note.toString());
+    const file = `notes/${note.toString()}.mp3`;
     player.play(file, function (err) {
         if (err) {
             throw err;

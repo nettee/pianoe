@@ -14,36 +14,68 @@ window.addEventListener('DOMContentLoaded', () => {
 const mousetrap = require('mousetrap');
 const play = require('./play');
 
-const mapping = {
-    a: 'C3',
-    s: 'D3',
-    d: 'E3',
-    f: 'F3',
-    g: 'G3',
-    h: 'A3',
-    j: 'B3',
-    k: 'C4',
-    l: 'D4',
-    ';': 'E4',
-    q: 'F4',
-    w: 'G4',
-    e: 'A4',
-    r: 'B4',
-    t: 'C5',
-    y: 'D5',
-    u: 'E5',
-    i: 'F5',
-    o: 'G5',
-    p: 'A5',
-    '1': 'B5',
-    '2': 'C6',
+const scale = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+
+class Note {
+
+    constructor(letter, octave, sharp) {
+        this.letter = letter;
+        this.octave = octave;
+        this.sharp = sharp || false;
+    }
+
+    toString() {
+        let base = this.letter + this.octave;
+        if (this.sharp) {
+            base += '+';
+        }
+        return base;
+    }
+
+    // sharp() {
+    //     // assert(!this.sharp);
+    //     if (this.letter === 'E') {
+    //         return new Note('F', this.octave, false);
+    //     } else if (this.letter === 'B') {
+    //         return new Note('C', this.octave + 1, false);
+    //     } else {
+    //         return new Note(this.letter, this.octave, true);
+    //     }
+    // }
+}
+
+
+const notes = {
+    2: ['z', 'x', 'c', 'v', 'b', 'n', 'm'], // C2-B2
+    3: ['a', 's', 'd', 'f', 'g', 'h', 'j'], // C3-B3
+    4: ['k', 'l', ';', 'q', 'w', 'e', 'r'], // C4-B4
+    5: ['t', 'y', 'u', 'i', 'o', 'p'],      // C5-A5
 };
 
-console.log(Object.keys(mapping));
-
-for (let key of Object.keys(mapping)) {
-    mousetrap.bind(key, function () {
-        let note = mapping[key];
-        play.play_one(note);
-    })
+for (let octave = 0; octave < 7; octave++) {
+    for (let i = 0; i < 7; i++) {
+        if (notes[octave] === undefined || notes[octave][i] === undefined) {
+            continue;
+        }
+        let key = notes[octave][i];
+        let letter = scale[i];
+        // Bind common notes
+        {
+            let note = new Note(letter, octave);
+            // console.log({key: key, note: note, note_string: note.toString()});
+            mousetrap.bind(key, function () {
+                play.play_one(note);
+            });
+        }
+        // Bind sharp notes
+        if (letter !== 'E' && letter !== 'B') {
+            let sharp_key = `shift+${key}`;
+            let sharp_note = new Note(letter, octave, true);
+            // console.log({key: key, note: sharp_note, note_string: sharp_note.toString()});
+            mousetrap.bind(sharp_key, function () {
+                play.play_one(sharp_note);
+            });
+        }
+    }
 }
+
