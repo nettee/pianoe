@@ -8,8 +8,10 @@ function createWindow () {
         width: 1000,
         height: 850,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js')
-        }
+            preload: path.join(__dirname, 'preload.js'),
+            // So that we can use Node APIs in renderer process
+            nodeIntegration: true,
+        },
     });
 
     // and load the index.html of the app.

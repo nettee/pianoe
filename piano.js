@@ -29,4 +29,4 @@ hints.forEach(hintsOn);
 
 keys.forEach(key => key.addEventListener("transitionend", removeTransition));
 
-window.addEventListener("keydown", playNote);
+// window.addEventListener("keydown", playNote);
