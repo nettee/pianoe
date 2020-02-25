@@ -1,8 +1,12 @@
 const player = require('play-sound')(opts = {});
 
 function play_one(note) {
-    console.log(note.toString());
-    const file = `notes/${note.toString()}.mp3`;
+    if (note.value < 1 || note.value > 88) {
+        console.log(`Invalid note value ${note.value}`);
+        return;
+    }
+    console.log(note.name());
+    const file = `notes/${note.value}.mp3`;
     player.play(file, function (err) {
         if (err) {
             throw err;

@@ -11,34 +11,49 @@ const scale = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
 const currentNote = document.querySelector(".nowplaying");
 
+const letter2value = {
+    C: 0,
+    D: 2,
+    E: 4,
+    F: 5,
+    G: 7,
+    A: 9,
+    B: 11,
+};
+
+const value2letter = [
+    'C', '#C', 'D', '#D',
+    'E', 'F', '#F', 'G',
+    '#G', 'A', '#A', 'B',
+];
+
 class Note {
 
-    constructor(letter, octave, sharp) {
-        this.letter = letter;
-        this.octave = octave;
-        this.sharp = sharp || false;
+    constructor(value) {
+        this.value = value;
     }
 
-    toString() {
-        let base = this.letter + this.octave;
-        if (this.sharp) {
-            base += '+';
-        }
-        return base;
+    static fromName(letter, octave, sharp) {
+        let value = (octave * 12 + letter2value[letter] + (sharp ? 1 : 0)) - 8;
+        return new Note(value);
     }
 
-    // sharp() {
-    //     // assert(!this.sharp);
-    //     if (this.letter === 'E') {
-    //         return new Note('F', this.octave, false);
-    //     } else if (this.letter === 'B') {
-    //         return new Note('C', this.octave + 1, false);
-    //     } else {
-    //         return new Note(this.letter, this.octave, true);
-    //     }
-    // }
+    sharp() {
+        return new Note(this.value + 1);
+    }
+
+    flat() {
+        return new Note(this.value - 1);
+    }
+
+    name() {
+        let normValue = this.value + 8;
+        let letter = value2letter[(normValue) % 12];
+        let octave = Math.floor(normValue / 12);
+        return letter + octave;
+    }
+
 }
-
 
 const notes = {
     2: ['z', 'x', 'c', 'v', 'b', 'n', 'm'], // C2-B2
@@ -46,6 +61,11 @@ const notes = {
     4: ['k', 'l', ';', 'q', 'w', 'e', 'r'], // C4-B4
     5: ['t', 'y', 'u', 'i', 'o', 'p'],      // C5-A5
 };
+
+// for (let value = 1; value <= 88; value++) {
+//     let note = new Note(value);
+//     console.log(note.value, note.name());
+// }
 
 for (let octave = 0; octave < 7; octave++) {
     for (let i = 0; i < 7; i++) {
@@ -55,24 +75,19 @@ for (let octave = 0; octave < 7; octave++) {
         let key = notes[octave][i];
         let letter = scale[i];
         // Bind common notes
-        {
-            let note = new Note(letter, octave);
-            // console.log({key: key, note: note, note_string: note.toString()});
-            mousetrap.bind(key, function () {
-                play.play_one(note);
-                currentNote.innerHTML = note.toString();
+        let note = Note.fromName(letter, octave);
+        mousetrap.bind(key, function () {
+            play.play_one(note);
+            currentNote.innerHTML = note.name();
+        });
 
-            });
-        }
         // Bind sharp notes
-        if (letter !== 'E' && letter !== 'B') {
-            let sharp_key = `shift+${key}`;
-            let sharp_note = new Note(letter, octave, true);
-            // console.log({key: key, note: sharp_note, note_string: sharp_note.toString()});
-            mousetrap.bind(sharp_key, function () {
-                play.play_one(sharp_note);
-                currentNote.innerHTML = sharp_note.toString();
-            });
-        }
+        let sharp_note = note.sharp();
+        let sharp_key = `shift+${key}`;
+        // console.log({key: key, note: sharp_note, note_string: sharp_note.toString()});
+        mousetrap.bind(sharp_key, function () {
+            play.play_one(sharp_note);
+            currentNote.innerHTML = sharp_note.name();
+        });
     }
 }
